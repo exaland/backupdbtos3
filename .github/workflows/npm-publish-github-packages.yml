@@ -16,14 +16,24 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '16'  # Remplacez par la version de Node.js que vous utilisez
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm install
 
+      - name: Concatener les fichiers si nécessaire
+        run: |
+          # Exemple de command pour commit les fichiers non volontaire
+          git add .   # Ajouter tous les fichiers (ou spécifiez les fichiers nécessaires)
+          git commit -m "Patch les fichiers avant mise à jour" || echo "Aucun changement à commettre"
+
       - name: Bump version
-        run: npm version minor
+        run: |
+          npm version minor -m "Upgrade to version %s [skip ci]"
+      
+      - name: Install updated dependencies
+        run: npm install
 
       - name: Publish package
         env:
