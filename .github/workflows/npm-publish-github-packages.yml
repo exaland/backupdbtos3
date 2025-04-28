@@ -23,8 +23,7 @@ jobs:
         run: npm install
 
       - name: Bump version
-        run: |
-          npm version minor -m "Upgrade to version %s [skip ci]"
+        run: npm version minor -m "Upgrade to version %s [skip ci]"
 
       - name: Publish package
         env:
