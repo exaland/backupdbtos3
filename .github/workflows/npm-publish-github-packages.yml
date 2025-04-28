@@ -22,21 +22,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check and commit changes if needed
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "There are uncommitted changes."
-            git add .  #ou spécifiez juste les fichiers requis
-            git commit -m "Committing changes before version bump" || echo "No changes to commit"
-          fi
-
-      - name: Bump version
-        run: |
-          npm version minor -m "Upgrade to version %s [skip ci]"
-
-      - name: Install updated dependencies
-        run: npm install
-
       - name: Publish package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
