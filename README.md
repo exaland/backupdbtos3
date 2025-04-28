@@ -43,6 +43,18 @@ DB_NAME=your_database_name
 - `DB_PASSWORD`: Le mot de passe de votre base de données.
 - `DB_NAME`: Le nom de votre base de données.
 
+### Initialisation et 🚀
+```
+import  MySqlS3Backup from "backupdbtos3"; 
+
+const backup = new MySqlS3Backup
+backup.runBackupProcess().then((result) => {
+    console.log("Backup process completed successfully.",result);
+}).catch((err) => {
+    console.error("Error during backup process:", err);
+});
+```
+
 ### Remarque
 
 Assurez-vous de ne jamais inclure vos vraies clés d'accès et autres informations sensibles dans votre code source, surtout si vous le partagez sur des plateformes publiques. Il est recommandé d'utiliser un fichier `.env` local et d'ajouter ce fichier au `.gitignore`.
