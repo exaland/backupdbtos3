@@ -1,6 +1,6 @@
 {
   "name": "backupdbtos3",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Backup Mysql DB to AWS S3",
   "main": "src/index.js",
   "bin": "index.js",
@@ -8,7 +8,28 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "mysql",
+    "backup",
+    "s3",
+    "aws",
+    "database",
+    "backup mysql",
+    "mysql to s3",
+    "aws s3",
+    "cloud backup",
+    "data storage",
+    "automated backup",
+    "backup tool",
+    "database backup",
+    "sql backup",
+    "s3 backup",
+    "mysql export",
+    "s3 storage",
+    "mysql dump",
+    "cloud storage",
+    "devops"
+  ],
   "author": "Alexandre MAGNIER",
   "license": "ISC",
   "dependencies": {
