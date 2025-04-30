@@ -2,6 +2,8 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 import fs from "fs";
 import { exec } from "child_process";
+import express from "express";
+import cron from "node-cron";
 
 dotenv.config();
 
@@ -16,6 +18,33 @@ class MySqlS3Backup {
         });
         this.bucketName = process.env.AWS_BUCKET_NAME;
         this.backupFileName = `${process.env.BACKUP_FILE_NAME}${Date.now()}.sql`;
+
+        // Initialiser Express
+        this.app = express();
+        this.app.use(express.json());
+
+        // Définir le endpoint webhook
+        this.app.post('/webhook/backup', async (req, res) => {
+            try {
+                await this.runBackupProcess();
+                res.status(200).send({ status: 200, message: 'Backup successfully launched.', filename: this.backupFileName });
+            } catch (err) {
+                res.status(500).send({status: 500, message: 'Erreur lors du backup.' + err.message});
+            }
+        });
+
+        // Démarrer le serveur
+        const port = process.env.WEBHOOK_PORT || 3000;
+        this.app.listen(port, () => {
+            console.log(`Webhook listening on port ${port}`);
+        });
+
+        // Planifier une sauvegarde récurrente (par exemple tous les jours à 2h)
+        // Modifier la syntaxe cron selon la fréquence souhaitée
+        cron.schedule('0 2 * * *', () => {
+            console.log('Lancement automatique de la sauvegarde cron.');
+            this.runBackupProcess();
+        });
     }
 
     async mysqlDump() {

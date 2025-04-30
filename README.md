@@ -10,13 +10,11 @@ You can install this package via npm:
 npm install backupdbtos3
 ```
 
-
 ## Configuration des Variables d'Environnement
 
 Avant de lancer l'application, vous devez configurer certaines variables d'environnement nécessaires pour le bon fonctionnement de l'application.
 
 Vous pouvez ajouter les variables suivantes dans votre fichier `.env` :
-
 
 ```
 AWS_REGION=your_aws_region
@@ -28,8 +26,8 @@ BACKUP_FILE_PATH=your_backup_file_path
 DB_USER=your_database_user
 DB_PASSWORD=your_database_password
 DB_NAME=your_database_name
+WEBHOOK_PORT=3000  # (optionnel, port pour le webhook)
 ```
-
 
 ### Description des Variables
 
@@ -42,19 +40,64 @@ DB_NAME=your_database_name
 - `DB_USER`: Le nom d'utilisateur de votre base de données.
 - `DB_PASSWORD`: Le mot de passe de votre base de données.
 - `DB_NAME`: Le nom de votre base de données.
+- `WEBHOOK_PORT`: (Optionnel) Port du serveur webhook pour lancer des sauvegardes à distance.
 
-### Initialisation et 🚀
-```
-import  MySqlS3Backup from "backupdbtos3"; 
+---
 
-const backup = new MySqlS3Backup
-backup.runBackupProcess().then((result) => {
-    console.log("Backup process completed successfully.",result);
-}).catch((err) => {
+## Initialisation et 🚀
+
+```javascript
+import MySqlS3Backup from "backupdbtos3"; 
+
+const backup = new MySqlS3Backup();
+
+backup.runBackupProcess()
+  .then((result) => {
+    console.log("Backup process completed successfully.", result);
+  })
+  .catch((err) => {
     console.error("Error during backup process:", err);
-});
+  });
 ```
 
-### Remarque
+---
+
+## Fonctionnalité de Webhook
+
+Pour automatiser le lancement de sauvegardes à distance ou via une plateforme tierce, la librairie inclut maintenant une **fonctionnalité de Webhook**.
+
+### Comment ça marche ?
+
+- La librairie démarre un serveur HTTP (avec Express) qui écoute sur le port défini dans la variable `WEBHOOK_PORT` (par défaut 3000).
+- Lorsqu'une requête POST est envoyée à l'endpoint `/webhook/backup`, la sauvegarde est lancée automatiquement.
+
+### Exemple d'utilisation
+
+1. Démarrez votre script principal, qui initialise la classe et démarre le serveur webhook :
+
+```javascript
+import MySqlS3Backup from "backupdbtos3";
+
+const backup = new MySqlS3Backup();
+console.log("Webhook server is listening...");
+```
+
+2. Envoyez une requête POST à l'endpoint pour déclencher une sauvegarde :
+
+```bash
+curl -X POST http://localhost:3000/webhook/backup
+```
+
+### Sécurité
+
+- Pensez à sécuriser votre webhook (authentification, IP whitelist, etc.) pour éviter tout déclenchement non autorisé.
+
+---
+
+## Remarque
 
 Assurez-vous de ne jamais inclure vos vraies clés d'accès et autres informations sensibles dans votre code source, surtout si vous le partagez sur des plateformes publiques. Il est recommandé d'utiliser un fichier `.env` local et d'ajouter ce fichier au `.gitignore`.
+
+---
+
+N'hésitez pas à me demander si vous souhaitez plus d'exemples ou une personnalisation supplémentaire !
