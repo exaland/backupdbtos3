@@ -31,9 +31,9 @@ class MySqlS3Backup {
         this.app.post('/webhook/backup', async (req, res) => {
             try {
                 await this.runBackupProcess();
-                res.status(200).send('Backup lancé avec succès.');
+                res.status(200).send({status: 200, message: 'Backup lancé avec succès.', filename: this.backupFileName});
             } catch (err) {
-                res.status(500).send('Erreur lors du backup.');
+                res.status(500).send({status: 500, message: 'Erreur lors du lancement du backup.', error: err.message});
             }
         });
 
