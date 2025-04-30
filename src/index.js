@@ -8,7 +8,11 @@ import cron from "node-cron";
 dotenv.config();
 
 class MySqlS3Backup {
-    constructor() {
+    /**
+     * Constructeur avec option pour la fréquence cron.
+     * @param {string|false} cronSchedule - La syntaxe cron ou false pour désactiver la planification automatique.
+     */
+    constructor(cronSchedule = '0 2 * * *') {
         this.s3Client = new S3Client({
             region: process.env.AWS_REGION,
             credentials: {
@@ -27,21 +31,33 @@ class MySqlS3Backup {
         this.app.post('/webhook/backup', async (req, res) => {
             try {
                 await this.runBackupProcess();
-                res.status(200).send({ status: 200, message: 'Backup successfully launched.', filename: this.backupFileName });
+                res.status(200).send('Backup lancé avec succès.');
             } catch (err) {
-                res.status(500).send({status: 500, message: 'Erreur lors du backup.' + err.message});
+                res.status(500).send('Erreur lors du backup.');
             }
         });
 
-        // Démarrer le serveur
+        // Démarrer le serveur webhook
         const port = process.env.WEBHOOK_PORT || 3000;
         this.app.listen(port, () => {
             console.log(`Webhook listening on port ${port}`);
         });
 
-        // Planifier une sauvegarde récurrente (par exemple tous les jours à 2h)
-        // Modifier la syntaxe cron selon la fréquence souhaitée
-        cron.schedule('0 2 * * *', () => {
+        // Planification cron optionnelle
+        if (cronSchedule !== false && typeof cronSchedule === 'string') {
+            this.cronSchedule = cronSchedule;
+            this.scheduleBackup();
+        } else {
+            console.log("Planification automatique désactivée.");
+        }
+    }
+
+    /**
+     * Planifie la sauvegarde selon la syntaxe cron fournie.
+     */
+    scheduleBackup() {
+        console.log(`Planification de la sauvegarde avec le cron : ${this.cronSchedule}`);
+        cron.schedule(this.cronSchedule, () => {
             console.log('Lancement automatique de la sauvegarde cron.');
             this.runBackupProcess();
         });

@@ -49,6 +49,7 @@ WEBHOOK_PORT=3000  # (optionnel, port pour le webhook)
 ```javascript
 import MySqlS3Backup from "backupdbtos3"; 
 
+// Avec planification automatique (par défaut tous les jours à 2h)
 const backup = new MySqlS3Backup();
 
 backup.runBackupProcess()
@@ -60,7 +61,19 @@ backup.runBackupProcess()
   });
 ```
 
----
+## Planification Cron (Optionnelle)
+
+Pour définir une fréquence automatique, passez une chaîne de syntaxe cron lors de l'initialisation. Si vous ne souhaitez pas de planification automatique, vous pouvez passer `false` :
+
+```javascript
+// Planification tous les heures
+const backupHourly = new MySqlS3Backup('0 * * * *');
+
+// Désactiver la planification automatique
+const backupSansCron = new MySqlS3Backup(false);
+```
+
+*Note :* Si vous ne spécifiez pas de paramètre ou si vous passez `true`, la planification ne sera pas activée. La valeur `false` désactive la planification automatique.
 
 ## Fonctionnalité de Webhook
 
@@ -98,6 +111,3 @@ curl -X POST http://localhost:3000/webhook/backup
 
 Assurez-vous de ne jamais inclure vos vraies clés d'accès et autres informations sensibles dans votre code source, surtout si vous le partagez sur des plateformes publiques. Il est recommandé d'utiliser un fichier `.env` local et d'ajouter ce fichier au `.gitignore`.
 
----
-
-N'hésitez pas à me demander si vous souhaitez plus d'exemples ou une personnalisation supplémentaire !
