@@ -127,6 +127,5 @@ class MySqlS3Backup {
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = MySqlS3Backup;
-} else {
-    export default MySqlS3Backup;
-}
+} 
+export default MySqlS3Backup;
